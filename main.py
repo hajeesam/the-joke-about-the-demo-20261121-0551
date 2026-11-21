@@ -18,7 +18,14 @@ JOKE = (
 def main() -> None:
     out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "output"))
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "entry.txt").write_text(JOKE, encoding="utf-8")
+    out_path = out_dir / "entry.txt"
+    out_path.write_text(JOKE, encoding="utf-8")
+    # Guard: read back what was written and validate it before exiting.
+    written = out_path.read_text(encoding="utf-8")
+    if not 1 <= len(written) <= 280 or not written.strip():
+        raise SystemExit(
+            f"entry.txt failed validation: {len(written)} characters"
+        )
 
 
 if __name__ == "__main__":
